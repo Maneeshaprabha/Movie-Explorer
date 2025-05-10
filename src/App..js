@@ -1,7 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
  // This is the one above
 import { LoginForm } from './components/LoginForm';
-import MovieDashboard from './components/MovieDashboard';
+import {MovieDashboard} from './components/MovieDashboard';
+
+// import {LoginForm} from './components/LoginForm';
 
 function App() {
   return (
@@ -11,6 +13,12 @@ function App() {
         <Route path="/dashboard" element={<MovieDashboard />} />
       </Routes>
     </Router>
+
+
+
+    //     <div>
+    //   <LoginForm />
+    // </div>
   );
 }
 
