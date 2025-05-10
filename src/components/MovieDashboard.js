@@ -1,104 +1,70 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  AppBar,
-  Toolbar,
-  Typography,
-  Tabs,
-  Tab,
-  ThemeProvider,
-  createTheme,
-  styled,
-} from '@mui/material';
-
-const Root = styled(Box)(({ theme }) => ({
-  minHeight: '100vh',
-  background: theme.palette.background.default,
-  padding: theme.spacing(2),
-}));
-
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  background: theme.palette.background.paper,
-}));
-
-const StyledToolbar = styled(Toolbar)({
-  display: 'flex',
-  justifyContent: 'space-between',
-});
-
-const Content = styled(Box)(({ theme }) => ({
-  marginTop: theme.spacing(2),
-}));
-
-const SearchBar = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-}));
-
-const TabsContainer = styled(Tabs)(({ theme }) => ({
-  maxWidth: 400,
-  margin: '0 auto',
-  marginTop: theme.spacing(2),
-}));
-
-const GridContainer = styled(Box)(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-  gap: theme.spacing(2),
-  marginTop: theme.spacing(2),
-}));
-
-const theme = createTheme({
-  palette: {
-    background: {
-      default: '#f5f5f5',
-      paper: '#ffffff',
-    },
-  },
-});
+import { useState } from 'react';
+import { Tabs, Tab, Box, Chip, Typography } from '@mui/material';
+import { SearchBar } from './SearchBar';
+import { MovieGrid } from './movieGrid';
+import { MovieDetails } from './MovieDetails';
+import { TrendingMovies } from './TrendingMovies';
+import { FavoriteMovies } from './favoriteMovies';
 
 export function MovieDashboard() {
-  const [tabValue, setTabValue] = useState('trending');
+  const [activeTab, setActiveTab] = useState('trending');
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
+  const favorites = [
+    // { id: 1, title: 'Sample Movie 1' },
+    // { id: 2, title: 'Sample Movie 2' },
+  ];
+
+  const handleSearch = (query) => {
+    console.log('Searching for:', query);
+    setActiveTab('search');
+  };
+
+  const handleMovieSelect = (movie) => {
+    setSelectedMovie(movie);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedMovie(null);
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Root>
-        <StyledAppBar position="static">
-          <StyledToolbar>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              <span style={{ color: '#e91e63' }}>Movie</span> Explorer
-            </Typography>
-          </StyledToolbar>
-        </StyledAppBar>
-        <Content>
-          <SearchBar>
-            <input
-              placeholder="Search for movies..."
-              style={{
-                width: '100%',
-                padding: 12,
-                borderRadius: 12,
-                border: '1px solid #ccc',
-              }}
-            />
-          </SearchBar>
-          <TabsContainer value={tabValue} onChange={handleTabChange}>
+    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3, bgcolor: 'background.default' }}>
+      <SearchBar onSearch={handleSearch} />
+      {selectedMovie ? (
+        <MovieDetails movie={selectedMovie} onClose={handleCloseDetails} />
+      ) : (
+        <>
+          <Tabs
+            value={activeTab}
+            onChange={(e, newValue) => setActiveTab(newValue)}
+            centered
+            sx={{ mt: 3, bgcolor: 'background.paper', borderRadius: 2 }}
+          >
             <Tab label="Trending" value="trending" />
             <Tab label="Search" value="search" />
-            <Tab label="Favorites" value="favorites" />
-          </TabsContainer>
-          <GridContainer>
-            <Box bgcolor="grey.200" height={240} borderRadius={12} />
-            <Box bgcolor="grey.200" height={240} borderRadius={12} />
-            <Box bgcolor="grey.200" height={240} borderRadius={12} />
-            <Box bgcolor="grey.200" height={240} borderRadius={12} />
-            <Box bgcolor="grey.200" height={240} borderRadius={12} />
-          </GridContainer>
-        </Content>
-      </Root>
-    </ThemeProvider>
+            <Tab
+              label={
+                <Box sx={{ position: 'relative' }}>
+                  Favorites
+                  {favorites.length > 0 && (
+                    <Chip
+                      label={favorites.length}
+                      color="primary"
+                      size="small"
+                      sx={{ position: 'absolute', top: -8, right: -8 }}
+                    />
+                  )}
+                </Box>
+              }
+              value="favorites"
+            />
+          </Tabs>
+          {activeTab === 'trending' && <TrendingMovies onSelectMovie={handleMovieSelect} />}
+          {activeTab === 'search' && <MovieGrid onSelectMovie={handleMovieSelect} />}
+          {activeTab === 'favorites' && <FavoriteMovies onSelectMovie={handleMovieSelect} />}
+        </>
+      )}
+    </Box>
   );
 }

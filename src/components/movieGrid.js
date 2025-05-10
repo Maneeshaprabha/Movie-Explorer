@@ -1,30 +1,30 @@
 import { Box, Button, Typography } from '@mui/material';
 import { MovieCard } from './MovieCard';
 
-export function TrendingMovies({ onSelectMovie }) {
-  const trendingMovies = [
+export function MovieGrid({ onSelectMovie }) {
+  const searchResults = [
     {
       id: 1,
-       title: 'Interstellar',
+      title: 'Interstellar',
       poster_path: './assets/interstellar.jpg',
       release_date: '2023-01-01',
-      vote_average: 7.8,
+      vote_average: 7.5,
     },
     {
       id: 2,
-         title: 'Interstellar',
+        title: 'Interstellar',
       poster_path: './assets/interstellar.jpg',
       release_date: '2023-02-01',
-      vote_average: 8.2,
+      vote_average: 8.0,
     },
   ];
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, py: 3 }}>
-      {trendingMovies.length === 0 ? (
+      {searchResults.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Typography variant="body1" color="text.secondary">
-            Loading trending movies...
+            No movies found. Try a different search term.
           </Typography>
         </Box>
       ) : (
@@ -36,7 +36,7 @@ export function TrendingMovies({ onSelectMovie }) {
               gap: 2,
             }}
           >
-            {trendingMovies.map((movie) => (
+            {searchResults.map((movie) => (
               <MovieCard key={movie.id} movie={movie} onClick={() => onSelectMovie(movie)} />
             ))}
           </Box>
@@ -45,7 +45,7 @@ export function TrendingMovies({ onSelectMovie }) {
               variant="outlined"
               color="primary"
               sx={{ minWidth: 150, borderRadius: 2, textTransform: 'none' }}
-              onClick={() => console.log('Load more trending')}
+              onClick={() => console.log('Load more')}
             >
               Load More
             </Button>

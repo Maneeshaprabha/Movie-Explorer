@@ -134,17 +134,31 @@
 
 
 
-
 import React, { useState } from 'react';
-import { Box, TextField, Button, Typography, Card, CardHeader, CardContent } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Card,
+  CardHeader,
+  CardContent,
+} from '@mui/material';
 import { Movie as FilmIcon } from '@mui/icons-material';
 
 export function LoginForm() {
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(isLogin ? 'Logging in' : 'Signing up');
+
+    // ✅ Simulate login success and redirect
+    if (isLogin) {
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -184,9 +198,13 @@ export function LoginForm() {
               >
                 <FilmIcon sx={{ fontSize: 32, color: '#e91e63' }} />
               </Box>
-              <Typography variant="h5">{isLogin ? 'Log In' : 'Create an Account'}</Typography>
+              <Typography variant="h5">
+                {isLogin ? 'Log In' : 'Create an Account'}
+              </Typography>
               <Typography variant="body2" color="text.secondary" mt={1}>
-                {isLogin ? 'Enter your credentials to access your account' : 'Fill in the details to sign up'}
+                {isLogin
+                  ? 'Enter your credentials to access your account'
+                  : 'Fill in the details to sign up'}
               </Typography>
             </Box>
           }
@@ -202,10 +220,37 @@ export function LoginForm() {
               mt: 2,
             }}
           >
-            <TextField label="Username" placeholder="Enter your username" fullWidth required />
-            {!isLogin && <TextField label="Email" type="email" placeholder="Enter your email" fullWidth required />}
-            <TextField label="Password" type="password" placeholder="••••••••" fullWidth required />
-            {!isLogin && <TextField label="Confirm Password" type="password" placeholder="••••••••" fullWidth required />}
+            <TextField
+              label="Username"
+              placeholder="Enter your username"
+              fullWidth
+              required
+            />
+            {!isLogin && (
+              <TextField
+                label="Email"
+                type="email"
+                placeholder="Enter your email"
+                fullWidth
+                required
+              />
+            )}
+            <TextField
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              fullWidth
+              required
+            />
+            {!isLogin && (
+              <TextField
+                label="Confirm Password"
+                type="password"
+                placeholder="••••••••"
+                fullWidth
+                required
+              />
+            )}
             <Button
               variant="contained"
               color="primary"
