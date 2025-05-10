@@ -15,7 +15,7 @@ export function LoginForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add validation/auth here
+   //auth
     navigate("/dashboard");
   };
 
