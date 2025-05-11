@@ -3,7 +3,6 @@ import { MovieExplorer } from './components/MovieExplorer';
 import { MovieDetails } from './components/MovieDetails';
 import { FavoriteMovies } from './components/FavoriteMovies';
 import { MovieProvider } from './context/MovieProvider';
-import { SearchBar } from './components/SearchBar';
 
 function App({ setThemeMode }) {
   return (
