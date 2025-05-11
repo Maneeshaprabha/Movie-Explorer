@@ -5,6 +5,7 @@ import { MovieDetails } from './components/MovieDetails';
 import { MovieProvider } from './context/MovieProvider';
 import { FavoriteMovies } from './components/FavoriteMovies';
 
+
 function App({ setThemeMode }) {
   return (
     <MovieProvider>
@@ -12,7 +13,7 @@ function App({ setThemeMode }) {
        
         <Route path="/" element={<MovieExplorer setThemeMode={setThemeMode} />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
-        <Route path="/favorites" element={<FavoriteMovies />} />
+        <Route path="/favorites" element={<FavoriteMovies/>} />
       </Routes>
     </MovieProvider>
   );
