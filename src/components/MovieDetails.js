@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import {
   Box,
   CardMedia,
@@ -7,64 +7,128 @@ import {
   Chip,
   Divider,
   Button,
+  AppBar,
+  Toolbar,
 } from '@mui/material';
 import {
-  Close as CloseIcon,
+  ArrowBack as BackIcon,
   Favorite as HeartIcon,
   CalendarToday as CalendarIcon,
   AccessTime as ClockIcon,
   Star as StarIcon,
 } from '@mui/icons-material';
+import { Link, useParams } from 'react-router-dom';
+import axios from 'axios';
+import { useSnackbar } from 'notistack';
+import { MovieContext } from '../context/MovieProvider';
+import { ApiKeyWarning } from './ApiKeyWarning';
 
-export function MovieDetails({ movie, onClose }) {
-  const [isFavorite, setIsFavorite] = useState(false);
+export function MovieDetails() {
+  const { id } = useParams();
+  const { favorites, addFavorite, removeFavorite } = useContext(MovieContext);
+  const [movieData, setMovieData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
-  const movieData = {
-    ...movie,
-    overview: 'The film follows a group of astronauts who travel through a wormhole near Saturn in search of a new home for mankind.',
-    runtime: 120,
-    genres: [{ id: 1, name: 'Action' }, { id: 2, name: 'Adventure' }],
-    cast: [
-      { id: 101, name: 'Actor One' },
-      { id: 102, name: 'Actor Two' },
-    ],
-    videos: [{ key: 'IpzucC0cQIg', site: 'YouTube', type: 'Trailer' }],
+  const isFavorite = favorites.some((fav) => fav.movieId === parseInt(id));
+
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      if (!process.env.REACT_APP_TMDB_API_KEY) {
+        setApiError(true);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const [movieResponse, creditsResponse, videosResponse] = await Promise.all([
+          axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_API_KEY}`),
+          axios.get(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_TMDB_API_KEY}`),
+          axios.get(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`),
+        ]);
+        setMovieData({
+          ...movieResponse.data,
+          cast: creditsResponse.data.cast,
+          videos: videosResponse.data.results,
+        });
+      } catch (err) {
+        enqueueSnackbar('Error fetching movie details', { variant: 'error' });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMovieDetails();
+  }, [id]);
+
+  const handleFavoriteClick = () => {
+    if (isFavorite) {
+      removeFavorite(parseInt(id));
+      enqueueSnackbar('Removed from favorites', { variant: 'success' });
+    } else {
+      const movie = {
+        id: movieData.id,
+        title: movieData.title,
+        poster_path: movieData.poster_path,
+        release_date: movieData.release_date,
+        vote_average: movieData.vote_average,
+      };
+      addFavorite(movie);
+      enqueueSnackbar('Added to favorites', { variant: 'success' });
+    }
   };
-
-  const backdropUrl = movieData.backdrop_path || './assets/image1.jpg';
-  const posterUrl = movieData.poster_path || './assets/image2.jpg';
 
   const formatRuntime = (minutes) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    return `${hours}h ${mins}m`; 
+    return `${hours}h ${mins}m`;
   };
 
+  if (apiError) {
+    return <ApiKeyWarning />;
+  }
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <Typography variant="body1" color="text.secondary">
+          Loading...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (!movieData) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <Typography variant="body1" color="text.secondary">
+          Failed to load movie details.
+        </Typography>
+      </Box>
+    );
+  }
+
+  const backdropUrl = movieData.backdrop_path
+    ? `https://image.tmdb.org/t/p/w1280${movieData.backdrop_path}`
+    : '/placeholder.svg';
+  const posterUrl = movieData.poster_path
+    ? `https://image.tmdb.org/t/p/w500${movieData.poster_path}`
+    : '/placeholder.svg';
+
   return (
-    <Box
-      sx={{
-        position: 'fixed',
-        inset: 0,
-        bgcolor: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: 2,
-        zIndex: 1300,
-      }}
-    >
-      <Box
-        sx={{
-          bgcolor: 'background.paper',
-          borderRadius: 2,
-          maxWidth: 900,
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <Box sx={{ position: 'relative', height: { xs: 200, md: 300 } }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <AppBar position="static" sx={{ boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+        <Toolbar>
+          <IconButton color="inherit" component={Link} to="/" aria-label="Back">
+            <BackIcon />
+          </IconButton>
+          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
+            <span style={{ color: 'primary.main' }}>Movie</span> Details
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ maxWidth: 1200, mx: 'auto', p: 3 }}>
+        <Box sx={{ position: 'relative', height: { xs: 200, sm: 300, md: 400 } }}>
           <CardMedia
             component="img"
             image={backdropUrl}
@@ -78,18 +142,6 @@ export function MovieDetails({ movie, onClose }) {
               background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
             }}
           />
-          <IconButton
-            onClick={onClose}
-            sx={{
-              position: 'absolute',
-              top: 8,
-              right: 8,
-              bgcolor: 'background.paper',
-              '&:hover': { bgcolor: 'grey.200' },
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
         </Box>
         <Box sx={{ p: 3, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
           <Box sx={{ display: { xs: 'none', md: 'block' }, width: '30%' }}>
@@ -107,7 +159,7 @@ export function MovieDetails({ movie, onClose }) {
                 variant={isFavorite ? 'contained' : 'outlined'}
                 color="primary"
                 startIcon={<HeartIcon />}
-                onClick={() => setIsFavorite(!isFavorite)}
+                onClick={handleFavoriteClick}
                 sx={{ borderRadius: 2, textTransform: 'none' }}
               >
                 {isFavorite ? 'Favorited' : 'Favorite'}
@@ -163,7 +215,7 @@ export function MovieDetails({ movie, onClose }) {
                   </Box>
                 </Box>
               )}
-              {movieData.videos.length > 0 && (
+              {movieData.videos && movieData.videos.length > 0 && (
                 <Box>
                   <Typography variant="h6" sx={{ mb: 1 }}>
                     Trailer

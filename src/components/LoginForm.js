@@ -134,33 +134,45 @@
 
 
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Card,
-  CardHeader,
-  CardContent,
-} from '@mui/material';
+import { useState } from 'react';
+import { Button, TextField, Card, CardContent, CardHeader, Typography, Box } from '@mui/material';
 import { Movie as FilmIcon } from '@mui/icons-material';
+import { useSnackbar } from 'notistack';
 
-export function LoginForm() {
+export function LoginForm({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(isLogin ? 'Logging in' : 'Signing up');
+    setIsLoading(true);
 
-    // ✅ Simulate login success and redirect
     if (isLogin) {
-      navigate('/dashboard');
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      if (storedUser.username === username && storedUser.password === password) {
+        onLogin({ username });
+        enqueueSnackbar('Logged in successfully', { variant: 'success' });
+      } else {
+        enqueueSnackbar('Invalid username or password', { variant: 'error' });
+      }
+    } else {
+      const existingUser = JSON.parse(localStorage.getItem('user') || '{}');
+      if (existingUser.username) {
+        enqueueSnackbar('User already exists. Please log in.', { variant: 'error' });
+      } else {
+        localStorage.setItem('user', JSON.stringify({ username, password }));
+        setIsLogin(true);
+        enqueueSnackbar('Registered successfully. Please log in.', { variant: 'success' });
+      }
     }
+    setIsLoading(false);
   };
-
+  
   return (
     <Box
       sx={{
@@ -225,6 +237,8 @@ export function LoginForm() {
               placeholder="Enter your username"
               fullWidth
               required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             {!isLogin && (
               <TextField
@@ -233,6 +247,8 @@ export function LoginForm() {
                 placeholder="Enter your email"
                 fullWidth
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             )}
             <TextField
@@ -241,6 +257,9 @@ export function LoginForm() {
               placeholder="••••••••"
               fullWidth
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              inputProps={{ minLength: 6 }}
             />
             {!isLogin && (
               <TextField
@@ -249,6 +268,8 @@ export function LoginForm() {
                 placeholder="••••••••"
                 fullWidth
                 required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             )}
             <Button
@@ -256,9 +277,16 @@ export function LoginForm() {
               color="primary"
               fullWidth
               type="submit"
+              disabled={isLoading}
               sx={{ borderRadius: 2, textTransform: 'none' }}
             >
-              {isLogin ? 'Sign In' : 'Sign Up'}
+              {isLoading
+                ? isLogin
+                  ? 'Logging in...'
+                  : 'Signing up...'
+                : isLogin
+                ? 'Sign In'
+                : 'Sign Up'}
             </Button>
           </Box>
         </CardContent>
@@ -284,6 +312,9 @@ export function LoginForm() {
               </Button>
             </Typography>
           )}
+          <Typography variant="caption" color="text.secondary" mt={1}>
+            By continuing, you agree to our Terms of <br />Service and Privacy Policy.
+          </Typography>
         </Box>
       </Card>
     </Box>

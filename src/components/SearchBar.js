@@ -1,26 +1,28 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { TextField,Box, InputAdornment, IconButton, Button } from '@mui/material';
 import { Search as SearchIcon, Clear as ClearIcon } from '@mui/icons-material';
+import { MovieContext } from '../context/MovieProvider';
 
 export function SearchBar({ onSearch }) {
-  const [query, setQuery] = useState('');
+  const { searchQuery, setSearchQuery } = useContext(MovieContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (query.trim()) {
-      onSearch(query);
+    if (onSearch) {
+      onSearch(searchQuery);
+    } else {
+      setSearchQuery(searchQuery); // Fallback to context
     }
   };
 
   const clearSearch = () => {
-    setQuery('');
+    setSearchQuery('');
   };
-
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 600, mx: 'auto' }}>
       <TextField
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search for movies..."
         fullWidth
         InputProps={{
@@ -29,7 +31,7 @@ export function SearchBar({ onSearch }) {
               <SearchIcon sx={{ color: 'text.secondary' }} />
             </InputAdornment>
           ),
-          endAdornment: query && (
+          endAdornment: searchQuery && (
             <InputAdornment position="end">
               <IconButton onClick={clearSearch} aria-label="Clear search">
                 <ClearIcon />
@@ -50,7 +52,7 @@ export function SearchBar({ onSearch }) {
         type="submit"
         variant="contained"
         color="primary"
-        disabled={!query.trim()}
+        disabled={!searchQuery.trim()}
         sx={{ borderRadius: 2, textTransform: 'none', width: '100%' }}
       >
         Search
