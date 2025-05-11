@@ -1,17 +1,32 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Card, CardMedia, Typography, IconButton, Box, Chip } from '@mui/material';
 import { Favorite as HeartIcon } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { MovieContext } from '../context/MovieProvider';
+import { useSnackbar } from 'notistack';
 
-export function MovieCard({ movie, onClick }) {
-  const [isFavorite, setIsFavorite] = useState(false);
+export function MovieCard({ movie }) {
+  const { favorites, addFavorite, removeFavorite } = useContext(MovieContext);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+
+  const isFavorite = favorites.some((fav) => fav.movieId === movie.id);
 
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
-    setIsFavorite(!isFavorite);
+    if (isFavorite) {
+      removeFavorite(movie.id);
+      enqueueSnackbar('Removed from favorites', { variant: 'success' });
+    } else {
+      addFavorite(movie);
+      enqueueSnackbar('Added to favorites', { variant: 'success' });
+    }
   };
 
-  const imageUrl = movie.poster_path || '/placeholder.svg';
+  const imageUrl = movie.poster_path
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+    : '/placeholder.svg';
 
   return (
     <Card
@@ -23,7 +38,7 @@ export function MovieCard({ movie, onClick }) {
         bgcolor: 'background.paper',
         borderRadius: 2,
       }}
-      onClick={onClick}
+      onClick={() => navigate(`/movie/${movie.id}`)}
     >
       <Box sx={{ position: 'relative', aspectRatio: '2/3', overflow: 'hidden' }}>
         {!imageLoaded && (

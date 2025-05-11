@@ -1,20 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import reportWebVitals from './reportWebVitals';
-import App from './App.';
-
+import React, { useState } from 'react';
+import { createRoot } from 'react-dom/client'; // ✅ React 18+
+import { BrowserRouter as Router } from 'react-router-dom';
+import App from './App';
 import { ThemeProvider } from '@mui/material/styles';
-import theme from './theme';
-// Ensure the import uses the correct name
+import CssBaseline from '@mui/material/CssBaseline';
+import { lightTheme, darkTheme } from './theme';
+import { SnackbarProvider } from 'notistack';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+function Root() {
+  const [themeMode, setThemeMode] = useState('light');
+  const theme = themeMode === 'light' ? lightTheme : darkTheme;
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <SnackbarProvider maxSnack={3}>
+        <Router>
+          <App setThemeMode={setThemeMode} />
+        </Router>
+      </SnackbarProvider>
+    </ThemeProvider>
+  );
+}
+
+// ✅ Use createRoot instead of ReactDOM.render
+const container = document.getElementById('root');
+const root = createRoot(container);
+
 root.render(
   <React.StrictMode>
- <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
+    <Root />
   </React.StrictMode>
 );
-
-reportWebVitals();
