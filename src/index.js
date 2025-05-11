@@ -23,7 +23,7 @@ function Root() {
   );
 }
 
-// ✅ Use createRoot instead of ReactDOM.render
+
 const container = document.getElementById('root');
 const root = createRoot(container);
 
