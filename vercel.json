@@ -15,9 +15,7 @@
       "dest": "/"
     }
   ],
-  "env": {
-    "REACT_APP_TMDB_API_KEY": "@tmdb_api_key"
-  },
+  
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "framework": "create-react-app"
