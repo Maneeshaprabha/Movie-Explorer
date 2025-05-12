@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { MovieExplorer } from './components/MovieExplorer';
 import { MovieDetails } from './components/MovieDetails';
-import TrendingMovies from './components/TrendingMovies';
+// import TrendingMovies from './components/ui/TrendingMovies'; 
 
 import { MovieProvider } from './context/MovieProvider';
 import { FavoriteMovies } from './components/FavoriteMovies';
