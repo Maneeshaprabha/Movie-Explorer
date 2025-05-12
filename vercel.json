@@ -5,14 +5,20 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "npm run build"
+        "distDir": "build"
       }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/"
     }
-  ]
+  ],
+  "env": {
+    "REACT_APP_TMDB_API_KEY": "@tmdb_api_key"
+  },
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "framework": "create-react-app"
 }
