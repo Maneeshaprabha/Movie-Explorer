@@ -5,6 +5,7 @@ import { MovieGrid } from './movieGrid';
 import { TrendingMovies } from './TrendingMovies';
 import { MovieContext } from '../context/MovieProvider';
 
+//now 
 export function MovieDashboard() {
   const [activeTab, setActiveTab] = useState('trending');
   const { filters, setFilters, genres } = useContext(MovieContext);
