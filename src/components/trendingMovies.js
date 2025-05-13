@@ -20,6 +20,7 @@ export function TrendingMovies() {
     setPage(1);
     setHasMore(true);
     fetchTrending(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const fetchTrending = async (pageNum) => {
