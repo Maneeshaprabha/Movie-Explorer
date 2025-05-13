@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { Tabs, Tab, Box, Chip, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Tabs, Tab, Box,  Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { SearchBar } from './SearchBar';
 
 import { MovieContext } from '../context/MovieProvider';
