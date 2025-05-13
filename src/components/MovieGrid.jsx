@@ -22,6 +22,7 @@ export function MovieGrid() {
       setHasMore(true);
       fetchSearchResults(1);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, filters]);
 
   const fetchSearchResults = async (pageNum) => {
