@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext} from 'react';
 import { TextField,Box, InputAdornment, IconButton, Button } from '@mui/material';
 import { Search as SearchIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { MovieContext } from '../context/MovieProvider';
@@ -11,7 +11,7 @@ export function SearchBar({ onSearch }) {
     if (onSearch) {
       onSearch(searchQuery);
     } else {
-      setSearchQuery(searchQuery); // Fallback to context
+      setSearchQuery(searchQuery);
     }
   };
 
