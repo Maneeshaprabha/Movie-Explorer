@@ -1,9 +1,10 @@
 import { useState, useContext } from 'react';
 import { Tabs, Tab, Box, Chip, Typography, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { SearchBar } from './SearchBar';
-import { MovieGrid } from './movieGrid';
-import { TrendingMovies } from './TrendingMovies';
+
 import { MovieContext } from '../context/MovieProvider';
+import { TrendingMovies } from './TrendingMovies';
+import { MovieGrid } from './MovieGrid';
 
 //now 
 export function MovieDashboard() {
