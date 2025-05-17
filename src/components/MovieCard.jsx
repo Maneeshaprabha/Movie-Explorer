@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { MovieContext } from '../context/MovieProvider';
 import { useSnackbar } from 'notistack';
 
+
+//test 
 export function MovieCard({ movie }) {
   const { favorites, addFavorite, removeFavorite } = useContext(MovieContext);
   const [imageLoaded, setImageLoaded] = useState(false);
