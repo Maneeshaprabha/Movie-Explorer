@@ -59,6 +59,7 @@ export function MovieDetails() {
       }
     };
     fetchMovieDetails();
+
   }, [id]);
 
   const handleFavoriteClick = () => {
