@@ -1,4 +1,6 @@
-     import { useContext } from 'react';
+
+import { useContext } from 'react';
+
 import { Box, Typography, Chip, AppBar, Toolbar, IconButton } from '@mui/material';
 import { MovieCard } from './MovieCard';
 import { FavoriteBorder as HeartIcon, ArrowBack as BackIcon } from '@mui/icons-material';
