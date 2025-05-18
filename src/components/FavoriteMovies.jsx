@@ -58,5 +58,7 @@ export function FavoriteMovies() {
         )}
       </Box>
     </Box>
+    
+    
   );
 }
